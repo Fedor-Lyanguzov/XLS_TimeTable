@@ -2,11 +2,13 @@ class TimeTable:
     classes = []
     classes_timetable = {}
 
+
 class Lesson:
     name = "lesson name"
     group = 0
     number = 0
     auditory = ""
+
     def __init__(self, name, number, group, auditory):
         self.number = number
         self.name = name
@@ -27,6 +29,7 @@ def getDay(day):
         return "Пятн."
     if day == 5:
         return "Субб."
+
 
 def getLessonsTime(lesson):
     if lesson == 0:
