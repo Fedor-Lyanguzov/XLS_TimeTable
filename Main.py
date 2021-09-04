@@ -4,45 +4,46 @@ from TimeTable import *
 import xlsxwriter
 
 
-def box(workbook, worksheet, first_row, first_col, rows_count, cols_count):
-
+def box(work_book, work_sheet, first_row, first_col, rows_count, cols_count):
     # top left corner
-    worksheet.conditional_format(first_row, first_col,
-                                 first_row, first_col,
-                                 {'type': 'formula', 'criteria': 'True',
-                                  'format': workbook.add_format({'top': 2, 'left': 2})})
+    work_sheet.conditional_format(first_row, first_col,
+                                  first_row, first_col,
+                                  {'type': 'formula', 'criteria': 'True',
+                                   'format': work_book.add_format({'top': 2, 'left': 2})})
     # top right corner
-    worksheet.conditional_format(first_row, first_col + cols_count - 1,
-                                 first_row, first_col + cols_count - 1,
-                                 {'type': 'formula', 'criteria': 'True',
-                                  'format': workbook.add_format({'top': 2, 'right': 2})})
+    work_sheet.conditional_format(first_row, first_col + cols_count - 1,
+                                  first_row, first_col + cols_count - 1,
+                                  {'type': 'formula', 'criteria': 'True',
+                                   'format': work_book.add_format({'top': 2, 'right': 2})})
     # bottom left corner
-    worksheet.conditional_format(first_row + rows_count - 1, first_col,
-                                 first_row + rows_count - 1, first_col,
-                                 {'type': 'formula', 'criteria': 'True',
-                                  'format': workbook.add_format({'bottom': 2, 'left': 2})})
+    work_sheet.conditional_format(first_row + rows_count - 1, first_col,
+                                  first_row + rows_count - 1, first_col,
+                                  {'type': 'formula', 'criteria': 'True',
+                                   'format': work_book.add_format({'bottom': 2, 'left': 2})})
     # bottom right corner
-    worksheet.conditional_format(first_row + rows_count - 1, first_col + cols_count - 1,
-                                 first_row + rows_count - 1, first_col + cols_count - 1,
-                                 {'type': 'formula', 'criteria': 'True',
-                                  'format': workbook.add_format({'bottom': 2, 'right': 2})})
+    work_sheet.conditional_format(first_row + rows_count - 1, first_col + cols_count - 1,
+                                  first_row + rows_count - 1, first_col + cols_count - 1,
+                                  {'type': 'formula', 'criteria': 'True',
+                                   'format': work_book.add_format({'bottom': 2, 'right': 2})})
 
     # top
-    worksheet.conditional_format(first_row, first_col + 1,
-                                 first_row, first_col + cols_count - 2,
-                                 {'type': 'formula', 'criteria': 'True', 'format': workbook.add_format({'top': 2})})
+    work_sheet.conditional_format(first_row, first_col + 1,
+                                  first_row, first_col + cols_count - 2,
+                                  {'type': 'formula', 'criteria': 'True', 'format': work_book.add_format({'top': 2})})
     # left
-    worksheet.conditional_format(first_row + 1,              first_col,
-                                 first_row + rows_count - 2, first_col,
-                                 {'type': 'formula', 'criteria': 'True', 'format': workbook.add_format({'left': 2})})
+    work_sheet.conditional_format(first_row + 1, first_col,
+                                  first_row + rows_count - 2, first_col,
+                                  {'type': 'formula', 'criteria': 'True', 'format': work_book.add_format({'left': 2})})
     # bottom
-    worksheet.conditional_format(first_row + rows_count - 1, first_col + 1,
-                                 first_row + rows_count - 1, first_col + cols_count - 2,
-                                 {'type': 'formula', 'criteria': 'True', 'format': workbook.add_format({'bottom': 2})})
+    work_sheet.conditional_format(first_row + rows_count - 1, first_col + 1,
+                                  first_row + rows_count - 1, first_col + cols_count - 2,
+                                  {'type': 'formula', 'criteria': 'True',
+                                   'format': work_book.add_format({'bottom': 2})})
     # right
-    worksheet.conditional_format(first_row + 1,              first_col + cols_count - 1,
-                                 first_row + rows_count - 2, first_col + cols_count - 1,
-                                 {'type': 'formula', 'criteria': 'True', 'format': workbook.add_format({'right': 2})})
+    work_sheet.conditional_format(first_row + 1, first_col + cols_count - 1,
+                                  first_row + rows_count - 2, first_col + cols_count - 1,
+                                  {'type': 'formula', 'criteria': 'True', 'format': work_book.add_format({'right': 2})})
+
 
 #  Import timetable
 workbook = load_workbook('cl_sum.xlsx')
@@ -84,7 +85,6 @@ for item in items:
         timetable.classes_timetable[item.student_class].append([lesson])
     else:
         timetable.classes_timetable[item.student_class][item.day].append(lesson)
-
 
 # Create excel file
 
