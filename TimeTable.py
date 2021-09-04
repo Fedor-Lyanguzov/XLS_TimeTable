@@ -1,6 +1,19 @@
 class TimeTable:
     classes = []
     classes_timetable = {}
+    teachers = []
+    teachers_timetable = {}
+
+
+class TeacherLesson:
+    class_name = "0-0"
+    number = 0
+    day = 0
+
+    def __init__(self, class_name, number, day):
+        self.class_name = class_name
+        self.number = number
+        self.day = day
 
 
 class Lesson:
@@ -29,6 +42,21 @@ def getDay(day):
         return "Пятн."
     if day == 5:
         return "Субб."
+
+
+def getDayFull(day):
+    if day == 0:
+        return "Понедельник"
+    if day == 1:
+        return "Вторник"
+    if day == 2:
+        return "Среда"
+    if day == 3:
+        return "Четверг"
+    if day == 4:
+        return "Пятница"
+    if day == 5:
+        return "Суббота"
 
 
 def getLessonsTime(lesson):

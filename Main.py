@@ -107,11 +107,8 @@ start_y = 2
 lessons = 8
 width = 4
 
-students_worksheet.set_row(start_y - 1, start_y + 7 * lessons, cell_format)
-
-# for y in range(start_y - 1, start_y + 7 * lessons):
-#     for x in range(start_x - 3, start_x + (len(timetable.classes) + 1) * width):
-#         students_worksheet.write(y, x, "", cell_format)
+students_worksheet.set_column(start_x - 1, start_x - 1, 12)
+students_worksheet.set_column(start_x - 2, start_x - 2, 2)
 
 ind = 0
 for st_class in timetable.classes:
@@ -134,6 +131,40 @@ for day in range(0, 6):
         students_worksheet.write(start_y + day * lessons + lesson, start_x - 1, getLessonsTime(lesson))
     students_worksheet.merge_range(start_y + day * lessons, start_x - 3, start_y + day * lessons + lessons - 1,
                                    start_x - 3, getDay(day), merge_format)
+
+for item in items:
+    for teacher in item.teachers:
+        if teacher not in timetable.teachers:
+            timetable.teachers.append(teacher)
+            timetable.teachers_timetable[teacher] = []
+        lesson = TeacherLesson(item.student_class, item.lesson_number, item.day)
+        timetable.teachers_timetable[teacher].append(lesson)
+
+teachers_worksheet = workbook.add_worksheet("teachers")
+teachers_worksheet.set_column(0, 0, 18)
+teachers_worksheet.set_column(1, 50, 5)
+
+start_x = 1
+start_y = 3
+lessons = 8
+
+ind = 0
+for teacher in sorted(timetable.teachers):
+    teachers_worksheet.write(start_y + ind, start_x - 1, teacher)
+    for lesson in timetable.teachers_timetable[teacher]:
+        class_name = lesson.class_name
+        if class_name == "10-8интернат":
+            class_name = "10-8"
+        teachers_worksheet.write(start_y + ind, start_x + lesson.day * lessons + lesson.number, class_name)
+    ind += 1
+
+for day in range(6):
+    box(workbook, teachers_worksheet, start_y, start_x + day * lessons, len(timetable.teachers), lessons)
+    box(workbook, teachers_worksheet, start_y - 2, start_x + day * lessons, 2, lessons)
+    teachers_worksheet.merge_range(start_y - 2, start_x + day * lessons, start_y - 2,
+                                   start_x + day * lessons + lessons - 1, getDayFull(day), merge_format)
+    for lesson in range(lessons):
+        teachers_worksheet.write(start_y - 1, start_x + day * lessons + lesson, lesson)
 
 print("done!")
 workbook.close()
