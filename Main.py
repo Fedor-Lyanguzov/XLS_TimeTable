@@ -3,6 +3,18 @@ from Item import *
 from TimeTable import *
 import xlsxwriter
 
+# from xls2xlsx import *
+# x2x = HTMLXLS2XLSX("Classes_Summaryhtml.html")
+# x2x.to_xlsx("spreadsheet.xlsx")
+
+from html2excel import ExcelParser
+
+input_file = 'Classes_Summary.xls'
+output_file = 'spreadsheet.xlsx'
+
+parser = ExcelParser(input_file)
+parser.to_excel(output_file)
+
 
 def box(work_book, work_sheet, first_row, first_col, rows_count, cols_count):
     # top left corner
@@ -46,6 +58,8 @@ def box(work_book, work_sheet, first_row, first_col, rows_count, cols_count):
 
 
 #  Import timetable
+
+
 workbook = load_workbook('cl_sum.xlsx')
 first_sheet = workbook.get_sheet_names()[0]
 worksheet = workbook.get_sheet_by_name(first_sheet)
