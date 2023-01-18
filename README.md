@@ -1,11 +1,11 @@
-#XLSX TimeTable converter
+# XLSX TimeTable converter
 
-##Libraries
-####1. XlsxWriter 
+## Libraries
+#### 1. XlsxWriter 
 ```
 pip install XlsxWriter
 ```
-####2. openpyxl
+#### 2. openpyxl
 ```
 pip install openpyxl
 ```
