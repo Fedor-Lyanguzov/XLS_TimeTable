@@ -3,12 +3,15 @@ from Item import *
 from TimeTable import *
 import xlsxwriter
 import tkinter as tk
-from tkinter.filedialog import askopenfile, askdirectory, askopenfilenames, askopenfilename
+from tkinter.filedialog import askdirectory, askopenfilename
 
-from html2excel import ExcelParser
 
+# create window
 root = tk.Tk()
+root.geometry("600x400")
+root.title("Summary Parser")
 
+# path to file
 path = tk.StringVar()
 path.set("...")
 
@@ -52,21 +55,11 @@ def getFile():
     op += "/output.xlsx"
     outputPath.set(op)
 
-root.geometry("600x400")
-root.title("Summary Parser")
-
-# label = tk.Label(text="Input file")
-# label.grid(row=0, column=0)
-#
-input_file = 'Classes_Summary.xls'
-output_file = 'spreadsheet.xlsx'
-
-parser = ExcelParser(input_file)
-parser.to_excel(output_file)
 
 def start():
     global path, outputPath
     input, output = path.get(), outputPath.get()
+
     def box(work_book, work_sheet, first_row, first_col, rows_count, cols_count):
         # top left corner
         work_sheet.conditional_format(first_row, first_col,
@@ -92,11 +85,13 @@ def start():
         # top
         work_sheet.conditional_format(first_row, first_col + 1,
                                       first_row, first_col + cols_count - 2,
-                                      {'type': 'formula', 'criteria': 'True', 'format': work_book.add_format({'top': 2})})
+                                      {'type': 'formula', 'criteria': 'True',
+                                       'format': work_book.add_format({'top': 2})})
         # left
         work_sheet.conditional_format(first_row + 1, first_col,
                                       first_row + rows_count - 2, first_col,
-                                      {'type': 'formula', 'criteria': 'True', 'format': work_book.add_format({'left': 2})})
+                                      {'type': 'formula', 'criteria': 'True',
+                                       'format': work_book.add_format({'left': 2})})
         # bottom
         work_sheet.conditional_format(first_row + rows_count - 1, first_col + 1,
                                       first_row + rows_count - 1, first_col + cols_count - 2,
@@ -105,11 +100,10 @@ def start():
         # right
         work_sheet.conditional_format(first_row + 1, first_col + cols_count - 1,
                                       first_row + rows_count - 2, first_col + cols_count - 1,
-                                      {'type': 'formula', 'criteria': 'True', 'format': work_book.add_format({'right': 2})})
-
+                                      {'type': 'formula', 'criteria': 'True',
+                                       'format': work_book.add_format({'right': 2})})
 
     #  Import timetable
-
 
     workbook = load_workbook(input)
     first_sheet = workbook.get_sheet_names()[0]
@@ -120,28 +114,29 @@ def start():
     items = []
 
     # Parse input file
-    for student_class in range(5, 320, 10):
+    for student_class in range(5, 260, 8):
         name = worksheet.cell(row=student_class, column=1).value
         for day in range(0, 6):
             for lesson_number in range(8):
                 lesson = []
-                for param in range(10):
+                for param in range(8):
                     cell = worksheet.cell(row=student_class + param, column=2 + day * 8 + lesson_number).value
-                    if cell is not None:
+                    if cell is not None and cell != "":
                         lesson.append(cell)
                 if len(lesson) == 4:
                     items.append(Item(student_class=name, teacher=lesson[1], subject=lesson[0], group=1, day=day,
                                       auditory=lesson[3], lesson_number=lesson_number))
-                elif len(lesson) == 10:
+                elif len(lesson) == 8:
                     items.append(Item(student_class=name, teacher=lesson[1], subject=lesson[0], group=1, day=day,
                                       auditory=lesson[3], lesson_number=lesson_number))
-                    items.append(Item(student_class=name, teacher=lesson[6], subject=lesson[5], group=2, day=day,
-                                      auditory=lesson[8], lesson_number=lesson_number))
+                    items.append(Item(student_class=name, teacher=lesson[5], subject=lesson[4], group=2, day=day,
+                                      auditory=lesson[7], lesson_number=lesson_number))
 
     timetable = TimeTable()
 
     # Create timetable
     for item in items:
+        print(item)
         if item.student_class not in timetable.classes:
             timetable.classes.append(item.student_class)
             timetable.classes_timetable[item.student_class] = []
@@ -180,7 +175,8 @@ def start():
         for day in range(6):
             box(workbook, students_worksheet, start_y + day * lessons, start_x + ind * width, lessons, width)
             for lesson in timetable.classes_timetable[st_class][day]:
-                students_worksheet.write(start_y + day * lessons + lesson.number, start_x + ind * width + lesson.group * 2,
+                students_worksheet.write(start_y + day * lessons + lesson.number,
+                                         start_x + ind * width + lesson.group * 2,
                                          lesson.name)
                 students_worksheet.write(start_y + day * lessons + lesson.number,
                                          start_x + ind * width + lesson.group * 2 + 1, lesson.auditory)
@@ -197,12 +193,14 @@ def start():
         students_worksheet.merge_range(start_y + day * lessons, start_x - 3, start_y + day * lessons + lessons - 1,
                                        start_x - 3, getDay(day), merge_format)
 
+    # teachers
     for item in items:
         for teacher in item.teachers:
             if teacher not in timetable.teachers:
                 timetable.teachers.append(teacher)
                 timetable.teachers_timetable[teacher] = []
             lesson = TeacherLesson(item.student_class, item.lesson_number, item.day)
+            lesson.classroom = item.auditory
             timetable.teachers_timetable[teacher].append(lesson)
 
     teachers_worksheet = workbook.add_worksheet("teachers")
@@ -230,6 +228,67 @@ def start():
                                        start_x + day * lessons + lessons - 1, getDayFull(day), merge_format)
         for lesson in range(lessons):
             teachers_worksheet.write(start_y - 1, start_x + day * lessons + lesson, lesson)
+
+    # teachers / classrooms
+    teachers_classrooms_worksheet = workbook.add_worksheet("teachers (classrooms)")
+    teachers_classrooms_worksheet.set_column(0, 0, 18)
+    teachers_classrooms_worksheet.set_column(1, 50, 5)
+
+    start_x = 1
+    start_y = 3
+    lessons = 8
+
+    ind = 0
+    for teacher in sorted(timetable.teachers):
+        teachers_classrooms_worksheet.write(start_y + ind, start_x - 1, teacher)
+        for lesson in timetable.teachers_timetable[teacher]:
+            classroom = lesson.classroom
+            teachers_classrooms_worksheet.write(start_y + ind, start_x + lesson.day * lessons + lesson.number,
+                                                classroom)
+        ind += 1
+
+    for day in range(6):
+        box(workbook, teachers_classrooms_worksheet, start_y, start_x + day * lessons, len(timetable.teachers), lessons)
+        box(workbook, teachers_classrooms_worksheet, start_y - 2, start_x + day * lessons, 2, lessons)
+        teachers_classrooms_worksheet.merge_range(start_y - 2, start_x + day * lessons, start_y - 2,
+                                                  start_x + day * lessons + lessons - 1, getDayFull(day), merge_format)
+        for lesson in range(lessons):
+            teachers_classrooms_worksheet.write(start_y - 1, start_x + day * lessons + lesson, lesson)
+
+    # classrooms / class
+    for item in items:
+        classroom = item.auditory
+        if classroom not in timetable.classrooms:
+            timetable.classrooms.append(classroom)
+            timetable.classrooms_timetable[classroom] = []
+        lesson = TeacherLesson(item.student_class, item.lesson_number, item.day)
+        timetable.classrooms_timetable[classroom].append(lesson)
+
+    classrooms_worksheet = workbook.add_worksheet("classrooms (classes)")
+    classrooms_worksheet.set_column(0, 0, 8)
+    classrooms_worksheet.set_column(1, 50, 5)
+
+    start_x = 1
+    start_y = 3
+    lessons = 8
+
+    ind = 0
+    for classroom in sorted(timetable.classrooms):
+        classrooms_worksheet.write(start_y + ind, start_x - 1, classroom)
+        for lesson in timetable.classrooms_timetable[classroom]:
+            class_name = lesson.class_name
+            if class_name == "10-8интернат":
+                class_name = "10-8"
+            classrooms_worksheet.write(start_y + ind, start_x + lesson.day * lessons + lesson.number, class_name)
+        ind += 1
+
+    for day in range(6):
+        box(workbook, classrooms_worksheet, start_y, start_x + day * lessons, len(timetable.classrooms), lessons)
+        box(workbook, classrooms_worksheet, start_y - 2, start_x + day * lessons, 2, lessons)
+        classrooms_worksheet.merge_range(start_y - 2, start_x + day * lessons, start_y - 2,
+                                         start_x + day * lessons + lessons - 1, getDayFull(day), merge_format)
+        for lesson in range(lessons):
+            classrooms_worksheet.write(start_y - 1, start_x + day * lessons + lesson, lesson)
 
     print("done!")
     workbook.close()

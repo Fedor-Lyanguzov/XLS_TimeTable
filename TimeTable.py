@@ -3,12 +3,15 @@ class TimeTable:
     classes_timetable = {}
     teachers = []
     teachers_timetable = {}
+    classrooms = []
+    classrooms_timetable = {}
 
 
 class TeacherLesson:
     class_name = "0-0"
     number = 0
     day = 0
+    classroom = "0"
 
     def __init__(self, class_name, number, day):
         self.class_name = class_name

@@ -15,3 +15,6 @@ class Item:
         self.day = day
         self.auditory = auditory
         self.lesson_number = lesson_number
+
+    def __repr__(self):
+        return f"{self.student_class} {self.subject} {self.teachers} {self.day} {self.lesson_number}"
