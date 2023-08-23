@@ -1,0 +1,22 @@
+[project]
+name = "xls_timetable"
+authors = [
+    {name = "Fedor Lyanguzov", email = "example@example.com"},
+]
+readme = "README.md"
+requires-python = ">=3.7"
+version = "0.0.1"
+
+dependencies = [
+	"openpyxl==3.1.2",
+	"XlsxWriter==3.1.2",
+]
+
+[project.optional-dependencies]
+test = [
+	"black==23.7.0",
+	"pytest==7.4.0",
+]
+
+[tool.setuptools]
+py-modules = []
