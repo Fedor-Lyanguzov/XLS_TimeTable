@@ -7,7 +7,9 @@ class Item:
     auditory = ""
     lesson_number = ""
 
-    def __init__(self, student_class, teacher, subject, group, day, auditory, lesson_number):
+    def __init__(
+        self, student_class, teacher, subject, group, day, auditory, lesson_number
+    ):
         self.student_class = student_class
         self.teachers = list(teacher.split(","))
         self.subject = subject

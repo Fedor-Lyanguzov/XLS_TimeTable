@@ -6,29 +6,16 @@ import tkinter as tk
 from tkinter.filedialog import askdirectory, askopenfilename
 
 
-# create window
-root = tk.Tk()
-root.geometry("600x400")
-root.title("Summary Parser")
-
-# path to file
-path = tk.StringVar()
-path.set("...")
-
-outputPath = tk.StringVar()
-outputPath.set("...")
-
-
 def setOutputPath():
     global outputPath
-    file = askdirectory() + "/output.xlsx"
-    print(file)
+    file = askdirectory(".") + "/output.xlsx"
+    print(f'{file=}')
     outputPath.set(file)
 
 
 def getFile():
     global path, outputPath
-    file = askopenfilename(parent=root, title='Choose a xlsx file')
+    file = askopenfilename(parent=root, title="Choose a xlsx file", initialdir=".")
     path.set(file)
     p = file
     name = list(p.split("/"))[-1][:-4]
@@ -36,7 +23,7 @@ def getFile():
         name = list(p.split("\\"))[-1][:-4]
     childes = list(p.split("/"))[:-1]
     isWind = False
-    print(childes)
+    print(f'{childes=}')
     if len(childes) == 0:
         childes = list(p.split("\\"))[:-1]
         isWind = True
@@ -45,7 +32,7 @@ def getFile():
             isWind = True
     except Exception:
         pass
-    if childes[0] == '':
+    if childes[0] == "":
         childes = childes[1:]
     op = ""
     for child in childes:
@@ -56,60 +43,112 @@ def getFile():
     outputPath.set(op)
 
 
-def start():
-    global path, outputPath
-    input, output = path.get(), outputPath.get()
+def box(work_book, work_sheet, first_row, first_col, rows_count, cols_count):
+    # top left corner
+    work_sheet.conditional_format(
+        first_row,
+        first_col,
+        first_row,
+        first_col,
+        {
+            "type": "formula",
+            "criteria": "True",
+            "format": work_book.add_format({"top": 2, "left": 2}),
+        },
+    )
+    # top right corner
+    work_sheet.conditional_format(
+        first_row,
+        first_col + cols_count - 1,
+        first_row,
+        first_col + cols_count - 1,
+        {
+            "type": "formula",
+            "criteria": "True",
+            "format": work_book.add_format({"top": 2, "right": 2}),
+        },
+    )
+    # bottom left corner
+    work_sheet.conditional_format(
+        first_row + rows_count - 1,
+        first_col,
+        first_row + rows_count - 1,
+        first_col,
+        {
+            "type": "formula",
+            "criteria": "True",
+            "format": work_book.add_format({"bottom": 2, "left": 2}),
+        },
+    )
+    # bottom right corner
+    work_sheet.conditional_format(
+        first_row + rows_count - 1,
+        first_col + cols_count - 1,
+        first_row + rows_count - 1,
+        first_col + cols_count - 1,
+        {
+            "type": "formula",
+            "criteria": "True",
+            "format": work_book.add_format({"bottom": 2, "right": 2}),
+        },
+    )
 
-    def box(work_book, work_sheet, first_row, first_col, rows_count, cols_count):
-        # top left corner
-        work_sheet.conditional_format(first_row, first_col,
-                                      first_row, first_col,
-                                      {'type': 'formula', 'criteria': 'True',
-                                       'format': work_book.add_format({'top': 2, 'left': 2})})
-        # top right corner
-        work_sheet.conditional_format(first_row, first_col + cols_count - 1,
-                                      first_row, first_col + cols_count - 1,
-                                      {'type': 'formula', 'criteria': 'True',
-                                       'format': work_book.add_format({'top': 2, 'right': 2})})
-        # bottom left corner
-        work_sheet.conditional_format(first_row + rows_count - 1, first_col,
-                                      first_row + rows_count - 1, first_col,
-                                      {'type': 'formula', 'criteria': 'True',
-                                       'format': work_book.add_format({'bottom': 2, 'left': 2})})
-        # bottom right corner
-        work_sheet.conditional_format(first_row + rows_count - 1, first_col + cols_count - 1,
-                                      first_row + rows_count - 1, first_col + cols_count - 1,
-                                      {'type': 'formula', 'criteria': 'True',
-                                       'format': work_book.add_format({'bottom': 2, 'right': 2})})
+    # top
+    work_sheet.conditional_format(
+        first_row,
+        first_col + 1,
+        first_row,
+        first_col + cols_count - 2,
+        {
+            "type": "formula",
+            "criteria": "True",
+            "format": work_book.add_format({"top": 2}),
+        },
+    )
+    # left
+    work_sheet.conditional_format(
+        first_row + 1,
+        first_col,
+        first_row + rows_count - 2,
+        first_col,
+        {
+            "type": "formula",
+            "criteria": "True",
+            "format": work_book.add_format({"left": 2}),
+        },
+    )
+    # bottom
+    work_sheet.conditional_format(
+        first_row + rows_count - 1,
+        first_col + 1,
+        first_row + rows_count - 1,
+        first_col + cols_count - 2,
+        {
+            "type": "formula",
+            "criteria": "True",
+            "format": work_book.add_format({"bottom": 2}),
+        },
+    )
+    # right
+    work_sheet.conditional_format(
+        first_row + 1,
+        first_col + cols_count - 1,
+        first_row + rows_count - 2,
+        first_col + cols_count - 1,
+        {
+            "type": "formula",
+            "criteria": "True",
+            "format": work_book.add_format({"right": 2}),
+        },
+    )
 
-        # top
-        work_sheet.conditional_format(first_row, first_col + 1,
-                                      first_row, first_col + cols_count - 2,
-                                      {'type': 'formula', 'criteria': 'True',
-                                       'format': work_book.add_format({'top': 2})})
-        # left
-        work_sheet.conditional_format(first_row + 1, first_col,
-                                      first_row + rows_count - 2, first_col,
-                                      {'type': 'formula', 'criteria': 'True',
-                                       'format': work_book.add_format({'left': 2})})
-        # bottom
-        work_sheet.conditional_format(first_row + rows_count - 1, first_col + 1,
-                                      first_row + rows_count - 1, first_col + cols_count - 2,
-                                      {'type': 'formula', 'criteria': 'True',
-                                       'format': work_book.add_format({'bottom': 2})})
-        # right
-        work_sheet.conditional_format(first_row + 1, first_col + cols_count - 1,
-                                      first_row + rows_count - 2, first_col + cols_count - 1,
-                                      {'type': 'formula', 'criteria': 'True',
-                                       'format': work_book.add_format({'right': 2})})
-
+def import_timetable(input):
     #  Import timetable
-
     workbook = load_workbook(input)
-    first_sheet = workbook.get_sheet_names()[0]
-    worksheet = workbook.get_sheet_by_name(first_sheet)
+    first_sheet = workbook.sheetnames[0]
+    worksheet = workbook[first_sheet]
 
-    print(worksheet.cell(row=4, column=1).value)
+    print(f'{worksheet.cell(row=4, column=1).value=}')
 
     items = []
 
@@ -120,23 +159,52 @@ def start():
             for lesson_number in range(8):
                 lesson = []
                 for param in range(8):
-                    cell = worksheet.cell(row=student_class + param, column=2 + day * 8 + lesson_number).value
+                    cell = worksheet.cell(
+                        row=student_class + param, column=2 + day * 8 + lesson_number
+                    ).value
                     if cell is not None and cell != "":
                         lesson.append(cell)
                 if len(lesson) == 4:
-                    items.append(Item(student_class=name, teacher=lesson[1], subject=lesson[0], group=1, day=day,
-                                      auditory=lesson[3], lesson_number=lesson_number))
+                    items.append(
+                        Item(
+                            student_class=name,
+                            teacher=lesson[1],
+                            subject=lesson[0],
+                            group=1,
+                            day=day,
+                            auditory=lesson[3],
+                            lesson_number=lesson_number,
+                        )
+                    )
                 elif len(lesson) == 8:
-                    items.append(Item(student_class=name, teacher=lesson[1], subject=lesson[0], group=1, day=day,
-                                      auditory=lesson[3], lesson_number=lesson_number))
-                    items.append(Item(student_class=name, teacher=lesson[5], subject=lesson[4], group=2, day=day,
-                                      auditory=lesson[7], lesson_number=lesson_number))
+                    items.append(
+                        Item(
+                            student_class=name,
+                            teacher=lesson[1],
+                            subject=lesson[0],
+                            group=1,
+                            day=day,
+                            auditory=lesson[3],
+                            lesson_number=lesson_number,
+                        )
+                    )
+                    items.append(
+                        Item(
+                            student_class=name,
+                            teacher=lesson[5],
+                            subject=lesson[4],
+                            group=2,
+                            day=day,
+                            auditory=lesson[7],
+                            lesson_number=lesson_number,
+                        )
+                    )
 
     timetable = TimeTable()
 
     # Create timetable
     for item in items:
-        print(item)
+        print(f'{item=}')
         if item.student_class not in timetable.classes:
             timetable.classes.append(item.student_class)
             timetable.classes_timetable[item.student_class] = []
@@ -145,22 +213,24 @@ def start():
             timetable.classes_timetable[item.student_class].append([lesson])
         else:
             timetable.classes_timetable[item.student_class][item.day].append(lesson)
+    return timetable
+
+def start():
+    global path, outputPath
+    input, output = path.get(), outputPath.get()
+
+    timetable = import_timetable(input)
 
     # Create excel file
 
     workbook = xlsxwriter.Workbook(output)
 
     students_worksheet = workbook.add_worksheet("students")
-    merge_format = workbook.add_format({
-        'bold': 1,
-        'border': 2,
-        'align': 'center',
-        'valign': 'vcenter'})
+    merge_format = workbook.add_format(
+        {"bold": 1, "border": 2, "align": "center", "valign": "vcenter"}
+    )
 
-    cell_format = workbook.add_format({
-        'bold': 1,
-        'border': 1
-    })
+    cell_format = workbook.add_format({"bold": 1, "border": 1})
 
     start_x = 4
     start_y = 2
@@ -173,25 +243,63 @@ def start():
     ind = 0
     for st_class in timetable.classes:
         for day in range(6):
-            box(workbook, students_worksheet, start_y + day * lessons, start_x + ind * width, lessons, width)
+            box(
+                workbook,
+                students_worksheet,
+                start_y + day * lessons,
+                start_x + ind * width,
+                lessons,
+                width,
+            )
             for lesson in timetable.classes_timetable[st_class][day]:
-                students_worksheet.write(start_y + day * lessons + lesson.number,
-                                         start_x + ind * width + lesson.group * 2,
-                                         lesson.name)
-                students_worksheet.write(start_y + day * lessons + lesson.number,
-                                         start_x + ind * width + lesson.group * 2 + 1, lesson.auditory)
+                students_worksheet.write(
+                    start_y + day * lessons + lesson.number,
+                    start_x + ind * width + lesson.group * 2,
+                    lesson.name,
+                )
+                students_worksheet.write(
+                    start_y + day * lessons + lesson.number,
+                    start_x + ind * width + lesson.group * 2 + 1,
+                    lesson.auditory,
+                )
             # Add classes names in header
-            students_worksheet.merge_range(start_y - 1, start_x + ind * width, start_y - 1, start_x + ind * width + 3,
-                                           st_class, merge_format)
+            try:
+                students_worksheet.merge_range(
+                    start_y - 1,
+                    start_x + ind * width,
+                    start_y - 1,
+                    start_x + ind * width + 3,
+                    st_class,
+                    merge_format,
+                )
+            except Exception as e:
+                print(e)
         ind += 1
 
     for day in range(0, 6):
         for lesson in range(lessons):
-            box(workbook, students_worksheet, start_y + day * lessons, start_x - 2, lessons, 2)
-            students_worksheet.write(start_y + day * lessons + lesson, start_x - 2, str(lesson))
-            students_worksheet.write(start_y + day * lessons + lesson, start_x - 1, getLessonsTime(lesson))
-        students_worksheet.merge_range(start_y + day * lessons, start_x - 3, start_y + day * lessons + lessons - 1,
-                                       start_x - 3, getDay(day), merge_format)
+            box(
+                workbook,
+                students_worksheet,
+                start_y + day * lessons,
+                start_x - 2,
+                lessons,
+                2,
+            )
+            students_worksheet.write(
+                start_y + day * lessons + lesson, start_x - 2, str(lesson)
+            )
+            students_worksheet.write(
+                start_y + day * lessons + lesson, start_x - 1, getLessonsTime(lesson)
+            )
+        students_worksheet.merge_range(
+            start_y + day * lessons,
+            start_x - 3,
+            start_y + day * lessons + lessons - 1,
+            start_x - 3,
+            getDay(day),
+            merge_format,
+        )
 
     # teachers
     for item in items:
@@ -218,16 +326,42 @@ def start():
             class_name = lesson.class_name
             if class_name == "10-8интернат":
                 class_name = "10-8"
-            teachers_worksheet.write(start_y + ind, start_x + lesson.day * lessons + lesson.number, class_name)
+            teachers_worksheet.write(
+                start_y + ind,
+                start_x + lesson.day * lessons + lesson.number,
+                class_name,
+            )
         ind += 1
 
     for day in range(6):
-        box(workbook, teachers_worksheet, start_y, start_x + day * lessons, len(timetable.teachers), lessons)
-        box(workbook, teachers_worksheet, start_y - 2, start_x + day * lessons, 2, lessons)
-        teachers_worksheet.merge_range(start_y - 2, start_x + day * lessons, start_y - 2,
-                                       start_x + day * lessons + lessons - 1, getDayFull(day), merge_format)
+        box(
+            workbook,
+            teachers_worksheet,
+            start_y,
+            start_x + day * lessons,
+            len(timetable.teachers),
+            lessons,
+        )
+        box(
+            workbook,
+            teachers_worksheet,
+            start_y - 2,
+            start_x + day * lessons,
+            2,
+            lessons,
+        )
+        teachers_worksheet.merge_range(
+            start_y - 2,
+            start_x + day * lessons,
+            start_y - 2,
+            start_x + day * lessons + lessons - 1,
+            getDayFull(day),
+            merge_format,
+        )
         for lesson in range(lessons):
-            teachers_worksheet.write(start_y - 1, start_x + day * lessons + lesson, lesson)
+            teachers_worksheet.write(
+                start_y - 1, start_x + day * lessons + lesson, lesson
+            )
 
     # teachers / classrooms
     teachers_classrooms_worksheet = workbook.add_worksheet("teachers (classrooms)")
@@ -243,17 +377,40 @@ def start():
         teachers_classrooms_worksheet.write(start_y + ind, start_x - 1, teacher)
         for lesson in timetable.teachers_timetable[teacher]:
             classroom = lesson.classroom
-            teachers_classrooms_worksheet.write(start_y + ind, start_x + lesson.day * lessons + lesson.number,
-                                                classroom)
+            teachers_classrooms_worksheet.write(
+                start_y + ind, start_x + lesson.day * lessons + lesson.number, classroom
+            )
         ind += 1
 
     for day in range(6):
-        box(workbook, teachers_classrooms_worksheet, start_y, start_x + day * lessons, len(timetable.teachers), lessons)
-        box(workbook, teachers_classrooms_worksheet, start_y - 2, start_x + day * lessons, 2, lessons)
-        teachers_classrooms_worksheet.merge_range(start_y - 2, start_x + day * lessons, start_y - 2,
-                                                  start_x + day * lessons + lessons - 1, getDayFull(day), merge_format)
+        box(
+            workbook,
+            teachers_classrooms_worksheet,
+            start_y,
+            start_x + day * lessons,
+            len(timetable.teachers),
+            lessons,
+        )
+        box(
+            workbook,
+            teachers_classrooms_worksheet,
+            start_y - 2,
+            start_x + day * lessons,
+            2,
+            lessons,
+        )
+        teachers_classrooms_worksheet.merge_range(
+            start_y - 2,
+            start_x + day * lessons,
+            start_y - 2,
+            start_x + day * lessons + lessons - 1,
+            getDayFull(day),
+            merge_format,
+        )
         for lesson in range(lessons):
-            teachers_classrooms_worksheet.write(start_y - 1, start_x + day * lessons + lesson, lesson)
+            teachers_classrooms_worksheet.write(
+                start_y - 1, start_x + day * lessons + lesson, lesson
+            )
 
     # classrooms / class
     for item in items:
@@ -279,40 +436,80 @@ def start():
             class_name = lesson.class_name
             if class_name == "10-8интернат":
                 class_name = "10-8"
-            classrooms_worksheet.write(start_y + ind, start_x + lesson.day * lessons + lesson.number, class_name)
+            classrooms_worksheet.write(
+                start_y + ind,
+                start_x + lesson.day * lessons + lesson.number,
+                class_name,
+            )
         ind += 1
 
     for day in range(6):
-        box(workbook, classrooms_worksheet, start_y, start_x + day * lessons, len(timetable.classrooms), lessons)
-        box(workbook, classrooms_worksheet, start_y - 2, start_x + day * lessons, 2, lessons)
-        classrooms_worksheet.merge_range(start_y - 2, start_x + day * lessons, start_y - 2,
-                                         start_x + day * lessons + lessons - 1, getDayFull(day), merge_format)
+        box(
+            workbook,
+            classrooms_worksheet,
+            start_y,
+            start_x + day * lessons,
+            len(timetable.classrooms),
+            lessons,
+        )
+        box(
+            workbook,
+            classrooms_worksheet,
+            start_y - 2,
+            start_x + day * lessons,
+            2,
+            lessons,
+        )
+        classrooms_worksheet.merge_range(
+            start_y - 2,
+            start_x + day * lessons,
+            start_y - 2,
+            start_x + day * lessons + lessons - 1,
+            getDayFull(day),
+            merge_format,
+        )
         for lesson in range(lessons):
-            classrooms_worksheet.write(start_y - 1, start_x + day * lessons + lesson, lesson)
+            classrooms_worksheet.write(
+                start_y - 1, start_x + day * lessons + lesson, lesson
+            )
 
     print("done!")
     workbook.close()
 
 
-pathLabel = tk.Label(text="input")
-pathLabel.grid(row=0, column=0)
+if __name__=="__main__":
+    # create window
+    root = tk.Tk()
+    root.geometry("600x400")
+    root.title("Summary Parser")
 
-pathEntry = tk.Entry(width=45, textvariable=path)
-pathEntry.grid(row=0, column=1)
+    # path to file
+    path = tk.StringVar()
+    path.set("...")
 
-browseButton = tk.Button(text="Browse", command=getFile)
-browseButton.grid(row=0, column=2)
+    outputPath = tk.StringVar()
+    outputPath.set("...")
 
-outputPathLabel = tk.Label(text="output")
-outputPathLabel.grid(row=1, column=0)
 
-outputPathEntry = tk.Entry(width=45, textvariable=outputPath)
-outputPathEntry.grid(row=1, column=1)
+    pathLabel = tk.Label(text="input")
+    pathLabel.grid(row=0, column=0)
 
-outputPathBrowseButton = tk.Button(text="Browse", command=setOutputPath)
-outputPathBrowseButton.grid(row=1, column=2)
+    pathEntry = tk.Entry(width=45, textvariable=path)
+    pathEntry.grid(row=0, column=1)
 
-startButton = tk.Button(text="Start", command=start)
-startButton.grid(row=3, column=2)
+    browseButton = tk.Button(text="Browse", command=getFile)
+    browseButton.grid(row=0, column=2)
 
-root.mainloop()
+    outputPathLabel = tk.Label(text="output")
+    outputPathLabel.grid(row=1, column=0)
+
+    outputPathEntry = tk.Entry(width=45, textvariable=outputPath)
+    outputPathEntry.grid(row=1, column=1)
+
+    outputPathBrowseButton = tk.Button(text="Browse", command=setOutputPath)
+    outputPathBrowseButton.grid(row=1, column=2)
+
+    startButton = tk.Button(text="Start", command=start)
+    startButton.grid(row=3, column=2)
+
+    root.mainloop()
