@@ -1,35 +1,30 @@
+from dataclasses import dataclass
+
+
 class TimeTable:
-    classes = []
-    classes_timetable = {}
-    teachers = []
-    teachers_timetable = {}
-    classrooms = []
-    classrooms_timetable = {}
+    def __init__(self):
+        self.classes = []
+        self.classes_timetable = {}
+        self.teachers = []
+        self.teachers_timetable = {}
+        self.classrooms = []
+        self.classrooms_timetable = {}
 
 
+@dataclass
 class TeacherLesson:
-    class_name = "0-0"
-    number = 0
-    day = 0
-    classroom = "0"
-
-    def __init__(self, class_name, number, day):
-        self.class_name = class_name
-        self.number = number
-        self.day = day
+    class_name: str = "0-0"
+    number: int = 0
+    day: int = 0
+    classroom: str = "0"
 
 
+@dataclass
 class Lesson:
-    name = "lesson name"
-    group = 0
-    number = 0
-    auditory = ""
-
-    def __init__(self, name, number, group, auditory):
-        self.number = number
-        self.name = name
-        self.group = group
-        self.auditory = auditory
+    name: str = "lesson name"
+    number: int = 0
+    group: int = 0
+    auditory: str = ""
 
 
 def getDay(day):

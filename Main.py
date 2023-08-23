@@ -9,7 +9,7 @@ from tkinter.filedialog import askdirectory, askopenfilename
 def setOutputPath():
     global outputPath
     file = askdirectory(".") + "/output.xlsx"
-    print(f'{file=}')
+    print(f"{file=}")
     outputPath.set(file)
 
 
@@ -23,7 +23,7 @@ def getFile():
         name = list(p.split("\\"))[-1][:-4]
     childes = list(p.split("/"))[:-1]
     isWind = False
-    print(f'{childes=}')
+    print(f"{childes=}")
     if len(childes) == 0:
         childes = list(p.split("\\"))[:-1]
         isWind = True
@@ -142,13 +142,16 @@ def box(work_book, work_sheet, first_row, first_col, rows_count, cols_count):
         },
     )
 
+
 def import_timetable(input):
     #  Import timetable
     workbook = load_workbook(input)
     first_sheet = workbook.sheetnames[0]
+    # worksheet = workbook["classrooms (classes)"]
     worksheet = workbook[first_sheet]
 
-    print(f'{worksheet.cell(row=4, column=1).value=}')
+    print(f"{worksheet.cell(row=4, column=1).value=}")
+    # assert worksheet.cell(row=3, column=2).value=="Понед."
 
     items = []
 
@@ -204,7 +207,7 @@ def import_timetable(input):
 
     # Create timetable
     for item in items:
-        print(f'{item=}')
+        print(f"{item=}")
         if item.student_class not in timetable.classes:
             timetable.classes.append(item.student_class)
             timetable.classes_timetable[item.student_class] = []
@@ -213,13 +216,14 @@ def import_timetable(input):
             timetable.classes_timetable[item.student_class].append([lesson])
         else:
             timetable.classes_timetable[item.student_class][item.day].append(lesson)
-    return timetable
+    return timetable, items
+
 
 def start():
     global path, outputPath
     input, output = path.get(), outputPath.get()
 
-    timetable = import_timetable(input)
+    timetable, items = import_timetable(input)
 
     # Create excel file
 
@@ -251,6 +255,10 @@ def start():
                 lessons,
                 width,
             )
+            try:
+                timetable.classes_timetable[st_class][day]
+            except:
+                print(f"{timetable.classes_timetable=}")
             for lesson in timetable.classes_timetable[st_class][day]:
                 students_worksheet.write(
                     start_y + day * lessons + lesson.number,
@@ -477,7 +485,7 @@ def start():
     workbook.close()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     # create window
     root = tk.Tk()
     root.geometry("600x400")
@@ -489,7 +497,6 @@ if __name__=="__main__":
 
     outputPath = tk.StringVar()
     outputPath.set("...")
-
 
     pathLabel = tk.Label(text="input")
     pathLabel.grid(row=0, column=0)
