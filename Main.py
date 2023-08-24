@@ -510,7 +510,9 @@ if __name__ == "__main__":
     outputPathEntry = tk.Entry(width=45, textvariable=outputPath)
     outputPathEntry.grid(row=1, column=1)
 
-    outputPathBrowseButton = tk.Button(text="Browse", command=lambda: setOutputPath(outputPath))
+    outputPathBrowseButton = tk.Button(
+        text="Browse", command=lambda: setOutputPath(outputPath)
+    )
     outputPathBrowseButton.grid(row=1, column=2)
 
     startButton = tk.Button(text="Start", command=lambda: start(path, outputPath))
