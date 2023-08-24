@@ -6,15 +6,13 @@ import tkinter as tk
 from tkinter.filedialog import askdirectory, askopenfilename
 
 
-def setOutputPath():
-    global outputPath
+def setOutputPath(outpuPath):
     file = askdirectory(".") + "/output.xlsx"
     print(f"{file=}")
     outputPath.set(file)
 
 
-def getFile():
-    global path, outputPath
+def getFile(path, outputPath):
     file = askopenfilename(parent=root, title="Choose a xlsx file", initialdir=".")
     path.set(file)
     p = file
@@ -219,8 +217,7 @@ def import_timetable(input):
     return timetable, items
 
 
-def start():
-    global path, outputPath
+def start(path, outputPath):
     input, output = path.get(), outputPath.get()
 
     timetable, items = import_timetable(input)
@@ -504,7 +501,7 @@ if __name__ == "__main__":
     pathEntry = tk.Entry(width=45, textvariable=path)
     pathEntry.grid(row=0, column=1)
 
-    browseButton = tk.Button(text="Browse", command=getFile)
+    browseButton = tk.Button(text="Browse", command=lambda: getFile(path, outputPath))
     browseButton.grid(row=0, column=2)
 
     outputPathLabel = tk.Label(text="output")
@@ -513,10 +510,10 @@ if __name__ == "__main__":
     outputPathEntry = tk.Entry(width=45, textvariable=outputPath)
     outputPathEntry.grid(row=1, column=1)
 
-    outputPathBrowseButton = tk.Button(text="Browse", command=setOutputPath)
+    outputPathBrowseButton = tk.Button(text="Browse", command=lambda: setOutputPath(outputPath))
     outputPathBrowseButton.grid(row=1, column=2)
 
-    startButton = tk.Button(text="Start", command=start)
+    startButton = tk.Button(text="Start", command=lambda: start(path, outputPath))
     startButton.grid(row=3, column=2)
 
     root.mainloop()
