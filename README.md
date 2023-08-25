@@ -14,7 +14,7 @@
 
 Команды для `git bash`:
 ```
-git clone https://github.com/Fedor-Lyanguzov/XLS_TimeTable.git
+git clone https://github.com/pfml239/XLS_TimeTable.git
 cd XLS_TimeTable
 python -m venv .venv
 source .venv/Scripts/activate
