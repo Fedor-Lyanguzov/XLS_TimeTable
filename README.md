@@ -1,11 +1,33 @@
 # XLSX TimeTable converter
 
-## Libraries
-#### 1. XlsxWriter 
+Инструменты для преобразования расписания. Расписание составляется в программе aSc Timetables. Составленное расписание необходимо отформатировать для печати с помощью данных инструментов.
+
+## `xlsx_to_xlsx`
+
+Инструмент для форматирования выгрузки "Общее расписание классов", полученной экспортом из расписания на веб-портале. Разработан в 2021 Даниилом Ярмаркиным, на данный момент устарел.
+
+## `xml_to_xlsx`
+
+Инструмент для форматирования выгрузки "aSc Timetables 2012 XML", полученной экспортом из программы. Разработан в 2023 Федором Лянгузовым.
+
+## Подготовка к разработке
+
+Команды для `git bash`:
 ```
-pip install XlsxWriter
+git clone https://github.com/Fedor-Lyanguzov/XLS_TimeTable.git
+cd XLS_TimeTable
+python -m venv .venv
+source .venv/Scripts/activate
+pip install .
 ```
-#### 2. openpyxl
+
+Запустить тесты:
 ```
-pip install openpyxl
+pytest -s
 ```
+
+Переформатировать код:
+```
+black .
+```
+

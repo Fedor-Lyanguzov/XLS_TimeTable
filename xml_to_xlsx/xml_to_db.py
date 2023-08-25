@@ -52,7 +52,7 @@ short = dict(
 
 
 def make_output(filename="output.xlsx"):
-    wb = load_workbook("template.xlsx")
+    wb = load_workbook("xml_to_xlsx/template.xlsx")
     with sqlite3.connect(".cache.db") as db:
         teachers = wb["Учителя"]
         make_teachers(db, teachers)

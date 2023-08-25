@@ -1,4 +1,5 @@
 # Project exclude paths
+build/
 .venv/
 .idea/
 *.egg-info/
